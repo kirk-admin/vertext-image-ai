@@ -5,6 +5,7 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
+import multer from "multer";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -47,20 +48,87 @@ if (!fs.existsSync(publicDir)) {
   fs.mkdirSync(publicDir, { recursive: true });
 }
 
+// Configure multer for handling file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(publicDir, "reference"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
 // Serve static files
 app.use(express.static(publicDir));
+app.use('/reference', express.static(path.join(publicDir, 'reference')));
 app.use(express.json());
+
+// Endpoint to upload reference images
+app.post("/upload-reference", upload.single("image"), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send({ error: "No file uploaded" });
+    }
+    res.send({ 
+      message: "Reference image uploaded successfully",
+      filename: req.file.filename
+    });
+  } catch (error) {
+    console.error("Error uploading reference image:", error);
+    res.status(500).send({ error: "Failed to upload reference image" });
+  }
+});
+
+// Endpoint to list available reference images
+app.get("/reference-images", (req, res) => {
+  try {
+    const referenceDir = path.join(publicDir, "reference");
+    console.log("Looking for reference images in:", referenceDir);
+    
+    // Ensure reference directory exists
+    if (!fs.existsSync(referenceDir)) {
+      console.log("Reference directory does not exist, creating it...");
+      fs.mkdirSync(referenceDir, { recursive: true });
+      return res.send([]);
+    }
+    
+    const files = fs.readdirSync(referenceDir);
+    console.log("Found files in reference directory:", files);
+    
+    const imageFiles = files
+      .filter(file => file.match(/\.(jpg|jpeg|png|gif)$/i))
+      .map(file => ({
+        name: file,
+        path: `/reference/${file}`
+      }));
+    
+    console.log("Sending image files:", imageFiles);
+    res.send(imageFiles);
+  } catch (error) {
+    console.error("Error listing reference images:", error);
+    res.status(500).send({ error: "Failed to list reference images" });
+  }
+});
 
 // Endpoint to generate and serve the image
 app.get("/generate-image", async (req, res) => {
   try {
-    // Get the prompt from the query string or use a default
     const prompt = req.query.prompt || "An astronaut riding a horse.";
+    const referenceImage = req.query.reference;
     
-    console.log(`Generating image for prompt: "${prompt}"`);
+    // If reference image is provided, modify the prompt to reference it
+    let modifiedPrompt = prompt;
+    if (referenceImage) {
+      // Add reference to the style in the prompt
+      modifiedPrompt = `Create an image in the style of "${referenceImage}": ${prompt}`;
+    }
     
-    // Call the Vertex AI Imagen API with the prompt
-    const response = await imagenModel.generateImages(prompt);
+    console.log(`Generating image for prompt: "${modifiedPrompt}"`);
+    
+    // Generate image using the modified prompt
+    const response = await imagenModel.generateImages(modifiedPrompt);
     
     if (!response.images || response.images.length === 0) {
       return res.status(500).send({ error: "No images in the response." });

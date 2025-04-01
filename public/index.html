@@ -8,51 +8,42 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>AI Image Generator</h1>
-            <p>Create stunning images with AI by describing what you want</p>
-        </header>
-        
-        <main>
-            <div class="prompt-container">
-                <form id="imageForm">
-                    <div class="input-group">
-                        <label for="prompt">Describe the image you want to generate:</label>
-                        <textarea 
-                            id="prompt" 
-                            name="prompt" 
-                            placeholder="An astronaut riding a horse..."
-                            rows="4"
-                            aria-label="Image description"
-                            required
-                        ></textarea>
+        <h1>AI Image Generator</h1>
+        <div class="input-section">
+            <form id="imageForm">
+                <div class="prompt-input">
+                    <input type="text" id="prompt" placeholder="Enter your prompt..." aria-label="Image generation prompt">
+                    <button type="submit" id="generateBtn" aria-label="Generate image">Generate</button>
+                </div>
+                
+                <div class="reference-section">
+                    <label for="referenceSelect">Reference Style (Optional):</label>
+                    <select id="referenceSelect" aria-label="Select reference image">
+                        <option value="">No reference</option>
+                    </select>
+                    <div class="reference-preview">
+                        <img id="referencePreview" src="" alt="Reference preview" style="display: none;">
                     </div>
-                    <button 
-                        type="submit" 
-                        id="generateBtn"
-                        aria-label="Generate image"
-                    >
-                        Generate Image
-                    </button>
-                </form>
-            </div>
-            
-            <div class="result-container" id="resultContainer">
-                <div class="loading-indicator" id="loadingIndicator">
-                    <div class="spinner"></div>
-                    <p>Generating your image...</p>
+                    <p class="reference-explanation">
+                        When you select a style reference, the AI will try to generate an image 
+                        that incorporates elements of the style or character from the reference image.
+                    </p>
                 </div>
-                <div class="image-container" id="imageContainer">
-                    <img id="generatedImage" alt="AI generated image" />
-                </div>
-            </div>
-        </main>
-        
-        <footer>
-            <p>Powered by Vertex AI and Firebase</p>
-        </footer>
-    </div>
+            </form>
+        </div>
 
+        <div id="resultContainer">
+            <div class="loading-section" style="display: none;">
+                <div class="spinner"></div>
+                <p>Generating your image...</p>
+            </div>
+
+            <div class="result-section">
+                <img id="resultImage" src="" alt="Generated image" style="display: none;">
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
     <script src="app.js"></script>
 </body>
 </html> 
