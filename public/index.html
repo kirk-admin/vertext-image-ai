@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Image Generator</h1>
+            <p>Create stunning images with AI by describing what you want</p>
+        </header>
+        
+        <main>
+            <div class="prompt-container">
+                <form id="imageForm">
+                    <div class="input-group">
+                        <label for="prompt">Describe the image you want to generate:</label>
+                        <textarea 
+                            id="prompt" 
+                            name="prompt" 
+                            placeholder="An astronaut riding a horse..."
+                            rows="4"
+                            aria-label="Image description"
+                            required
+                        ></textarea>
+                    </div>
+                    <button 
+                        type="submit" 
+                        id="generateBtn"
+                        aria-label="Generate image"
+                    >
+                        Generate Image
+                    </button>
+                </form>
+            </div>
+            
+            <div class="result-container" id="resultContainer">
+                <div class="loading-indicator" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <p>Generating your image...</p>
+                </div>
+                <div class="image-container" id="imageContainer">
+                    <img id="generatedImage" alt="AI generated image" />
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Powered by Vertex AI and Firebase</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html> 
