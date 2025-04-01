@@ -6,6 +6,9 @@ A web application that leverages Firebase Vertex AI to generate images from text
 
 This application provides a simple web interface for users to enter text prompts and generate AI images. It uses Firebase's Vertex AI integration to access Google Cloud's powerful Imagen 3.0 model for high-quality image generation.
 
+![image](https://github.com/user-attachments/assets/41202a6d-6ab4-4b57-b1b4-ed46f49e3a00)
+
+
 ## Features
 
 - Text-to-image generation using advanced AI
